@@ -1,0 +1,81 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request: 
+  workflow_dispatch: 
+  
+jobs:
+  windows:
+    strategy:
+      matrix:
+        python-version: ["3.6", "3.7", "3.8", "3.9", "3.10", "3.11"]
+
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+          
+      - name: cache-vulkansdk
+        id: cache-vulkansdk
+        uses: actions/cache@v3
+        with:
+          path: "VulkanSDK"
+          key: VulkanSDK-1.3.231.1-Installer
+          
+      - name: vulkansdk
+        if: steps.cache-vulkansdk.outputs.cache-hit != 'true'
+        run: |
+          Invoke-WebRequest -Uri https://sdk.lunarg.com/sdk/download/1.3.231.1/windows/VulkanSDK-1.3.231.1-Installer.exe?Human=true -OutFile VulkanSDK-Installer.exe
+          7z x -aoa ./VulkanSDK-Installer.exe -oVulkanSDK
+          
+      - uses: actions/setup-python@v4 
+        with:
+          python-version: ${{ matrix.python-version }}
+          architecture: x64
+          
+      - name: Check Python version
+        run: |
+          python --version
+          
+      - name: Build
+        run: |
+          $env:VULKAN_SDK="$(pwd)\VulkanSDK"
+          $env:CMAKE_FLAGS="-DPY_VERSION=${{ matrix.python-version }}"
+          cd realcugan_ncnn_vulkan_python
+          mkdir build && cd build
+          cmake -A x64 -DCMAKE_CXX_FLAGS="-frtti -fexceptions" ..
+          cmake --build . --config Release -j 4 
+      
+      - name: Test
+        run: |
+          pip install --upgrade chardet
+          pip install pathlib Pillow
+          cd test
+          mkdir models
+          cd ..
+          echo F | xcopy .\realcugan_ncnn_vulkan_python\realcugan_ncnn_vulkan.py test
+          echo F | xcopy .\realcugan_ncnn_vulkan_python\build\Release\realcugan_ncnn_vulkan_wrapper.*.pyd test
+          echo D | xcopy .\realcugan_ncnn_vulkan_python\realcugan-ncnn-vulkan\models\*.* test\models /s /e
+          cd test
+          ls
+          python test.py
+           
+      - name: Create upload dist
+        run: |
+          mkdir dist
+          cd dist
+          mkdir models
+          cd ..
+          echo F | xcopy .\realcugan_ncnn_vulkan_python\realcugan_ncnn_vulkan.py dist
+          echo F | xcopy .\realcugan_ncnn_vulkan_python\build\Release\realcugan_ncnn_vulkan_wrapper.*.pyd dist
+          echo D | xcopy .\realcugan_ncnn_vulkan_python\realcugan-ncnn-vulkan\models\*.* dist\models /s /e
+                
+      - name: upload
+        uses: actions/upload-artifact@v3
+        with:
+           name: realcugan-ncnn-python${{ matrix.python-version }}
+           path: dist
