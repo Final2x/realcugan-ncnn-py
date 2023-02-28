@@ -4,7 +4,7 @@ from setuptools import setup
 from wheel.bdist_wheel import bdist_wheel as _bdist_wheel
 import sys
 
-_ver = "0.0.2.31"
+_ver = "0.0.2.32"
 
 class bdist_wheel(_bdist_wheel):
     def finalize_options(self):
