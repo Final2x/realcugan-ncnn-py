@@ -304,4 +304,4 @@ if(USE_STATIC_MOLTENVK)
     ${CoreFoundation})
 endif()
 
-target_link_libraries(realcugan_ncnn_vulkan_wrapper PRIVATE ${REALCUGAN_LINK_LIBRARIES})
+target_link_libraries(realcugan_ncnn_vulkan_wrapper PRIVATE ${REALCUGAN_LINK_LIBRARIES}) 

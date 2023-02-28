@@ -1,7 +1,12 @@
 import sys
 import os
 import time
-from realcugan_ncnn_vulkan import Realcugan
+
+try:
+    from realcugan_ncnn_vulkan import Realcugan
+except ImportError:
+    from realcugan_ncnn_py import Realcugan
+    
 from PIL import Image
 
 

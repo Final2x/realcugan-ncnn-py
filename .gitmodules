@@ -1,6 +1,6 @@
-[submodule "realcugan_ncnn_vulkan_python/pybind11"]
-	path = realcugan_ncnn_vulkan_python/pybind11
+[submodule "src/pybind11"]
+	path = src/pybind11
 	url = https://github.com/pybind/pybind11
-[submodule "realcugan_ncnn_vulkan_python/realcugan-ncnn-vulkan"]
-	path = realcugan_ncnn_vulkan_python/realcugan-ncnn-vulkan
+[submodule "src/realcugan-ncnn-vulkan"]
+	path = src/realcugan-ncnn-vulkan
 	url = https://github.com/nihui/realcugan-ncnn-vulkan

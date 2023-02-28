@@ -1,2 +1,2 @@
-# realcugan-ncnn-vulkan-pybind11
-Python Binding for realcugan-ncnn-vulkan
+# realcugan-ncnn-py
+Python Binding for realcugan-ncnn-vulkan with PyBind11
