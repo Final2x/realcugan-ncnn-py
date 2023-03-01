@@ -39,7 +39,7 @@ if __name__ == "__main__":
     with Image.open("output.png") as image:
         assert image.width == out_w
         assert image.height == out_h
-        assert os.path.getsize("output.png") > 0
+        assert os.path.getsize("output.png") > 1000000
 
     print("Test END!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
     print("Time : ", time.time() - time_start)
