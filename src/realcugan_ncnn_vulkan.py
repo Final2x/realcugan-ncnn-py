@@ -91,10 +91,7 @@ class Realcugan:
         self._realcugan_object.set_parameters(noise, scale, prepadding, syncgap)
 
     def _get_prepadding(self) -> int:
-        if self._model in ("models-se", "models-nose", "models-pro"):
-            return {2: 18, 3: 14, 4: 19}.get(self._scale, 0)
-        else:
-            raise ValueError(f'model "{self._model}" is not supported')
+        return {2: 18, 3: 14, 4: 19}.get(self._scale, 0)
 
     def _load(
             self, param_path: pathlib.Path = None, model_path: pathlib.Path = None
@@ -111,32 +108,33 @@ class Realcugan:
             if not model_path.is_dir():
                 model_path = pathlib.Path(__file__).parent / "models" / self._model
 
-                if self._noise == -1:
-                    param_path = (
-                            model_path
-                            / f"up{self._scale}x-conservative.param"
-                    )
-                    model_path = (
-                            model_path
-                            / f"up{self._scale}x-conservative.bin"
-                    )
-                elif self._noise == 0:
-                    param_path = (
-                            model_path
-                            / f"up{self._scale}x-no-denoise.param"
-                    )
-                    model_path = (
-                            model_path / f"up{self._scale}x-no-denoise.bin"
-                    )
-                else:
-                    param_path = (
-                            model_path
-                            / f"up{self._scale}x-denoise{self._noise}x.param"
-                    )
-                    model_path = (
-                            model_path
-                            / f"up{self._scale}x-denoise{self._noise}x.bin"
-                    )
+            if self._noise == -1:
+                param_path = (
+                        model_path
+                        / f"up{self._scale}x-conservative.param"
+                )
+                model_path = (
+                        model_path
+                        / f"up{self._scale}x-conservative.bin"
+                )
+            elif self._noise == 0:
+                param_path = (
+                        model_path
+                        / f"up{self._scale}x-no-denoise.param"
+                )
+                model_path = (
+                        model_path / f"up{self._scale}x-no-denoise.bin"
+                )
+            else:
+                param_path = (
+                        model_path
+                        / f"up{self._scale}x-denoise{self._noise}x.param"
+                )
+                model_path = (
+                        model_path
+                        / f"up{self._scale}x-denoise{self._noise}x.bin"
+                )
+
         if self._realcugan_object.load(str(param_path), str(model_path)) != 0:
             raise Exception("Failed to load model")
 
