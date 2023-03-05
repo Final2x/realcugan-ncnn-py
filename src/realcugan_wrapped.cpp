@@ -68,10 +68,10 @@ int RealCUGANWrapped::get_tilesize(int _scale) const {
     return tilesize;
 }
 
-void RealCUGANWrapped::set_parameters(int _noise, int _scale, int _prepadding, int _syncgap) {
+void RealCUGANWrapped::set_parameters(int _noise, int _scale, int _prepadding, int _syncgap, int tilesize) {
     this->noise = _noise;
     this->scale = _scale;
-    this->tilesize = RealCUGANWrapped::get_tilesize(_scale);
+    this->tilesize = tilesize ? tilesize : RealCUGANWrapped::get_tilesize(_scale);
     this->prepadding = _prepadding;
     this->syncgap = _syncgap;
 }

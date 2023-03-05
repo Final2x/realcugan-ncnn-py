@@ -26,6 +26,8 @@ SOFTWARE.
 import pathlib
 import time
 from PIL import Image
+import numpy as np
+import cv2
 
 if __package__ or "." in __name__:
     from . import realcugan_ncnn_vulkan_wrapper as wrapped
@@ -73,25 +75,25 @@ class Realcugan:
         self._noise = noise
         self._scale = scale
 
-        self._set_parameters(noise, scale, self._get_prepadding(), syncgap)
+        self._set_parameters(noise, scale, syncgap, tilesize)
 
         self._load()
 
-    def _set_parameters(self, noise, scale, prepadding, syncgap) -> None:
+        self.raw_in_image = None
+        self.raw_out_image = None
+
+    def _set_parameters(self, noise, scale, syncgap, tilesize) -> None:
         """
         Set parameters for RealCUGAN
 
         :param noise: denoise level
         :param scale: upscale ratio
         :param tilesize: tile size
-        :param prepadding: prepadding
         :param syncgap: sync gap mode
         :return: None
         """
-        self._realcugan_object.set_parameters(noise, scale, prepadding, syncgap)
-
-    def _get_prepadding(self) -> int:
-        return {2: 18, 3: 14, 4: 19}.get(self._scale, 0)
+        _prepadding = {2: 18, 3: 14, 4: 19}.get(self._scale, 0)
+        self._realcugan_object.set_parameters(noise, scale, _prepadding, syncgap, tilesize)
 
     def _load(
             self, param_path: pathlib.Path = None, model_path: pathlib.Path = None
@@ -138,47 +140,138 @@ class Realcugan:
         if self._realcugan_object.load(str(param_path), str(model_path)) != 0:
             raise Exception("Failed to load model")
 
-    def process(self, image: Image) -> Image:
+    def process(self) -> None:
+        if self._gpuid != -1:
+            self._realcugan_object.process(self.raw_in_image, self.raw_out_image)
+        else:
+            self._realcugan_object.process_cpu(self.raw_in_image, self.raw_out_image)
 
-        in_bytes = image.tobytes()
-        channels = int(len(in_bytes) / (image.width * image.height))
+    def process_pil(self, _image: Image) -> Image:
+        """
+        Process a PIL image
+
+        :param _image: PIL image
+        :return: processed PIL image
+        """
+
+        in_bytes = _image.tobytes()
+        channels = int(len(in_bytes) / (_image.width * _image.height))
         out_bytes = (self._scale ** 2) * len(in_bytes) * b"\x00"
 
-        raw_in_image = wrapped.Image(
+        self.raw_in_image = wrapped.Image(
             in_bytes,
-            image.width,
-            image.height,
+            _image.width,
+            _image.height,
             channels
         )
 
-        raw_out_image = wrapped.Image(
+        self.raw_out_image = wrapped.Image(
             out_bytes,
-            self._scale * image.width,
-            self._scale * image.height,
+            self._scale * _image.width,
+            self._scale * _image.height,
             channels,
         )
 
-        if self._gpuid != -1:
-            self._realcugan_object.process(raw_in_image, raw_out_image)
-        else:
-            self._realcugan_object.process_cpu(raw_in_image, raw_out_image)
+        self.process()
 
         return Image.frombytes(
-            image.mode,
+            _image.mode,
             (
-                self._scale * image.width,
-                self._scale * image.height,
+                self._scale * _image.width,
+                self._scale * _image.height,
             ),
-            raw_out_image.get_data(),
+            self.raw_out_image.get_data(),
         )
+
+    def process_cv2(self, _image: np.ndarray) -> np.ndarray:
+        """
+        Process a cv2 image
+
+        :param _image: cv2 image
+        :return: processed cv2 image
+        """
+        _image = cv2.cvtColor(_image, cv2.COLOR_BGR2RGB)
+
+        in_bytes = _image.tobytes()
+        channels = int(len(in_bytes) / (_image.shape[1] * _image.shape[0]))
+        out_bytes = (self._scale ** 2) * len(in_bytes) * b"\x00"
+
+        self.raw_in_image = wrapped.Image(
+            in_bytes,
+            _image.shape[1],
+            _image.shape[0],
+            channels
+        )
+
+        self.raw_out_image = wrapped.Image(
+            out_bytes,
+            self._scale * _image.shape[1],
+            self._scale * _image.shape[0],
+            channels,
+        )
+
+        self.process()
+
+        res = np.frombuffer(
+            self.raw_out_image.get_data(),
+            dtype=np.uint8
+        ).reshape(
+            self._scale * _image.shape[0],
+            self._scale * _image.shape[1],
+            channels
+        )
+
+        return cv2.cvtColor(res, cv2.COLOR_RGB2BGR)
+
+    def process_bytes(self, _image_bytes: bytes, width: int, height: int, channels: int) -> bytes:
+        """
+        Process a bytes image, like bytes from ffmpeg
+
+        :param _image_bytes: bytes
+        :param width: image width
+        :param height: image height
+        :param channels: image channels
+        :return: processed bytes image
+        """
+        if self.raw_in_image is None and self.raw_out_image is None:
+            self.raw_in_image = wrapped.Image(
+                _image_bytes,
+                width,
+                height,
+                channels
+            )
+
+            self.raw_out_image = wrapped.Image(
+                (self._scale ** 2) * len(_image_bytes) * b"\x00",
+                self._scale * width,
+                self._scale * height,
+                channels,
+            )
+
+        self.raw_in_image.set_data(_image_bytes)
+
+        self.process()
+
+        return self.raw_out_image.get_data()
 
 
 if __name__ == "__main__":
+    realcugan = Realcugan(gpuid=0, scale=2, noise=3)
+
     time_start = time.time()
 
     with Image.open("input.jpg") as image:
-        realcugan = Realcugan(gpuid=0, scale=2, noise=3)
-        image = realcugan.process(image)
-        image.save("output.jpg")
+        image = realcugan.process_pil(image)
+        image.save("output.jpg", quality=95)
+
+    print(f"Time: {(time.time() - time_start) * 1000} ms")
+
+    # test cv2
+
+    time_start = time.time()
+
+    image = cv2.imdecode(np.fromfile("input.jpg", dtype=np.uint8), cv2.IMREAD_COLOR)
+    image = realcugan.process_cv2(image)
+    cv2.imencode(".jpg", image)[1].tofile("output_cv2.jpg")
 
     print(f"Time: {(time.time() - time_start) * 1000} ms")

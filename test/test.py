@@ -33,7 +33,7 @@ if __name__ == "__main__":
         out_h = image.height * _scale
 
         realcugan = Realcugan(gpuid=_gpuid, scale=_scale, noise=3)
-        image = realcugan.process(image)
+        image = realcugan.process_pil(image)
         image.save("output.png")
 
     with Image.open("output.png") as image:
