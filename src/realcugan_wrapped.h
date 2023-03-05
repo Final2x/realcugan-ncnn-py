@@ -29,7 +29,7 @@ public:
     int get_tilesize(int _scale) const;
 
     // realcugan parameters
-    void set_parameters(int _noise, int _scale, int _prepadding, int _syncgap);
+    void set_parameters(int _noise, int _scale, int _prepadding, int _syncgap, int _tilesize);
 
     int load(const std::string &parampath, const std::string &modelpath);
 
