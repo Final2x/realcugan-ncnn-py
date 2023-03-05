@@ -4,8 +4,6 @@ from setuptools import setup
 from wheel.bdist_wheel import bdist_wheel as _bdist_wheel
 import sys
 
-_ver = "0.0.2.32"
-
 class bdist_wheel(_bdist_wheel):
     def finalize_options(self):
         _bdist_wheel.finalize_options(self)
@@ -27,7 +25,7 @@ elif sys.platform == "linux":
 
 setup(
     name='realcugan_ncnn_py',
-    version=_ver,
+    version=open('version.txt', encoding='utf-8').read(),
     description='',
     long_description=open('README.md', encoding='utf-8').read(),
     long_description_content_type='text/markdown',
