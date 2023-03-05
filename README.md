@@ -25,7 +25,7 @@ pip install realcugan-ncnn-py
 Then, import the Realcugan class from the package:
 
 ```python
-from realcugan-ncnn-py import Realcugan
+from realcugan_ncnn_py import Realcugan
 ```
 To initialize the model:
 
