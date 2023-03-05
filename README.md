@@ -22,6 +22,10 @@ To use this package, simply install it via pip:
 ```sh
 pip install realcugan-ncnn-py
 ```
+For Linux user:
+```sh
+apt install -y libomp5 libvulkan-dev
+```
 Then, import the Realcugan class from the package:
 
 ```python
@@ -74,6 +78,8 @@ while True:
 ```
 # Build
 [here](https://github.com/Tohrusky/realcugan-ncnn-py/blob/main/.github/workflows/Release.yml) 
+
+*The project just only been tested in Ubuntu 18+ and Debian 9+ environments on Linux, so if the project does not work on your system, please try building it.*
 
 
 # References
