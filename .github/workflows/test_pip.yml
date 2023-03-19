@@ -2,7 +2,7 @@ name: test_pip
 
 on:
   schedule:
-    - cron: "0 19 * * *"
+    - cron: "0 19 * 1 *"
   workflow_dispatch: 
     
 jobs:
