@@ -69,7 +69,7 @@ jobs:
           cd ..
           echo F | xcopy .\src\realcugan_ncnn_vulkan.py test
           echo F | xcopy .\src\build\Release\realcugan_ncnn_vulkan_wrapper.*.pyd test
-          echo D | xcopy .\src\realcugan-ncnn-vulkan\models\*.* test\models /s /e
+          echo D | xcopy .\models\*.* test\models /s /e
           cd test
           ls
           python -m pytest
@@ -82,7 +82,7 @@ jobs:
           cd ..
           echo F | xcopy .\src\realcugan_ncnn_vulkan.py dist
           echo F | xcopy .\src\build\Release\realcugan_ncnn_vulkan_wrapper.*.pyd dist
-          echo D | xcopy .\src\realcugan-ncnn-vulkan\models\*.* dist\models /s /e
+          echo D | xcopy .\models\*.* dist\models /s /e
                 
       - name: upload
         uses: actions/upload-artifact@v3

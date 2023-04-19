@@ -184,7 +184,7 @@ jobs:
           pip install twine wheel setuptools
           pip install -r requirements.txt
           cp src/realcugan_ncnn_vulkan.py realcugan_ncnn_py
-          cp -r src/realcugan-ncnn-vulkan/models realcugan_ncnn_py
+          cp -r models realcugan_ncnn_py
           python setup.py bdist_wheel
 
       - name: upload
@@ -246,7 +246,7 @@ jobs:
           cd ..
           echo F | xcopy .\src\realcugan_ncnn_vulkan.py realcugan_ncnn_py
           echo F | xcopy .\src\build\Release\realcugan_ncnn_vulkan_wrapper.*.pyd realcugan_ncnn_py
-          echo D | xcopy .\src\realcugan-ncnn-vulkan\models\*.* realcugan_ncnn_py\models /s /e
+          echo D | xcopy .\models\*.* realcugan_ncnn_py\models /s /e
           python setup.py bdist_wheel
            
       - name: upload
@@ -307,7 +307,7 @@ jobs:
           pip install -r requirements.txt
           cp src/realcugan_ncnn_vulkan.py realcugan_ncnn_py
           cp src/build/realcugan_ncnn_vulkan_wrapper.*.so realcugan_ncnn_py
-          cp -r src/realcugan-ncnn-vulkan/models realcugan_ncnn_py
+          cp -r models realcugan_ncnn_py
           python setup.py bdist_wheel
 
       - name: upload

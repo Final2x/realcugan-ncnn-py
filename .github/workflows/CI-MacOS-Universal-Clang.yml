@@ -188,7 +188,7 @@ jobs:
         pip install -r requirements.txt
         cp src/realcugan_ncnn_vulkan.py test
         cp dist/realcugan_ncnn_vulkan_wrapper.*.so test
-        cp -r src/realcugan-ncnn-vulkan/models test
+        cp -r models test
         cd test
         ls
         python -m pytest
@@ -196,7 +196,7 @@ jobs:
     - name: Upload dist
       run: |
         cp src/realcugan_ncnn_vulkan.py dist
-        cp -r src/realcugan-ncnn-vulkan/models dist
+        cp -r models dist
         
    
     - name: upload
