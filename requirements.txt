@@ -1,7 +1,7 @@
-pathlib~=1.0.1
+pathlib
 opencv-python~=4.6.0.66
-scikit-image~=0.17.2
-Pillow~=8.4.0
-pytest~=7.0.1
-pytest-cov~=4.0.0
+scikit-image
+Pillow
+pytest
+pytest-cov
 realcugan-ncnn-py
