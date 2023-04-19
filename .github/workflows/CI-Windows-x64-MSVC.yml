@@ -47,7 +47,7 @@ jobs:
       - name: vulkansdk
         if: steps.cache-vulkansdk.outputs.cache-hit != 'true'
         run: |
-          Invoke-WebRequest -Uri https://sdk.lunarg.com/sdk/download/1.2.162.1/windows/VulkanSDK-1.2.162.1-Installer.exe?Human=true -OutFile VulkanSDK-1.2.162.1-Installer.exe
+          Invoke-WebRequest -Uri https://github.com/Tohrusky/realcugan-ncnn-vulkan-build-macOS/releases/download/v0.0.1/VulkanSDK-1.2.162.1-Installer.exe -OutFile VulkanSDK-1.2.162.1-Installer.exe
           7z x -aoa ./VulkanSDK-1.2.162.1-Installer.exe -oVulkanSDK
           Remove-Item .\VulkanSDK\Demos, .\VulkanSDK\Samples, .\VulkanSDK\Third-Party, .\VulkanSDK\Tools, .\VulkanSDK\Tools32, .\VulkanSDK\Bin32, .\VulkanSDK\Lib32 -Recurse          
           
@@ -62,8 +62,8 @@ jobs:
       
       - name: Test
         run: |
-          pip install --upgrade pip chardet
-          pip install pathlib Pillow opencv-python==4.6.0.66
+          pip install --upgrade pip chardet          
+          pip install -r requirements.txt
           cd test
           mkdir models
           cd ..
@@ -72,7 +72,7 @@ jobs:
           echo D | xcopy .\src\realcugan-ncnn-vulkan\models\*.* test\models /s /e
           cd test
           ls
-          python test.py
+          python -m pytest
            
       - name: Create upload dist
         run: |
