@@ -54,4 +54,4 @@ def test_realcugan():
     with Image.open("output.png") as image:
         assert image.width == out_w
         assert image.height == out_h
-        assert calculate_image_similarity() is True
+        assert calculate_image_similarity()
