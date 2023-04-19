@@ -36,7 +36,6 @@ jobs:
       - name: Check Python version
         run: |
           python --version
-          pip install --upgrade pip
           
       - name: cache-vulkansdk
         id: cache-vulkansdk
