@@ -106,6 +106,7 @@ jobs:
     - name: Check Python version
       run: |
         python --version
+        pip install --upgrade pip
     
     
     - name: install-openmp
