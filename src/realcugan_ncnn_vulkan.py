@@ -37,14 +37,14 @@ else:
 
 class Realcugan:
     """
-    :param gpuid int: gpu device to use (-1=cpu)
-    :param tta_mode bool: enable test time argumentation
-    :param num_threads int: processing thread count
-    :param noise int: denoise level
-    :param scale int: upscale ratio
-    :param tilesize int: tile size
-    :param syncgap int: sync gap mode
-    :param model str: realcugan model name
+    :param gpuid: gpu device to use, -1 for cpu
+    :param tta_mode: enable test time argumentation
+    :param num_threads: processing thread count
+    :param noise: denoise level, -1 for conservative, 0 for no denoise, 1-3 for denoise
+    :param scale: upscale ratio
+    :param tilesize: tile size, 0 for auto, must >= 32
+    :param syncgap: sync gap mode
+    :param model: realcugan model name, default is "models-se", can be "models-se" or "models-pro" or "models-nose", or an absolute path to the models' directory
     """
 
     def __init__(
@@ -82,7 +82,7 @@ class Realcugan:
         self.raw_in_image = None
         self.raw_out_image = None
 
-    def _set_parameters(self, noise, scale, syncgap, tilesize) -> None:
+    def _set_parameters(self, noise: int, scale: int, syncgap: int, tilesize: int) -> None:
         """
         Set parameters for RealCUGAN
 
@@ -99,10 +99,10 @@ class Realcugan:
             self, param_path: pathlib.Path = None, model_path: pathlib.Path = None
     ) -> None:
         """
-        Load models from given paths. Use self.model if one or all of the parameters are not given.
+        Load models from given paths. Use self._model if one or all of the parameters are not given.
 
-        :param parampath: the path to model params. usually ended with ".param"
-        :param modelpath: the path to model bin. usually ended with ".bin"
+        :param param_path: the path to model params. usually ended with ".param"
+        :param model_path: the path to model bin. usually ended with ".bin"
         :return: None
         """
         if param_path is None or model_path is None:
