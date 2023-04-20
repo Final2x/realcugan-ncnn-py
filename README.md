@@ -36,7 +36,7 @@ To initialize the model:
 ```python
 realcugan = Realcugan(gpuid: int = 0, tta_mode: bool = False, num_threads: int = 1, noise: int = -1, scale: int = 2, tilesize: int = 0, syncgap: int = 3, model: str = "models-se", **_kwargs)
 # model can be "models-se" or "models-pro" or "models-nose"
-# or a absolute path to the models' directory
+# or an absolute path to the models' directory
 ```
 Here, gpuid specifies the GPU device to use (-1 means use CPU), tta_mode enables test-time augmentation, num_threads sets the number of threads for processing, noise specifies the level of noise to apply to the image (-1 to 3), scale is the scaling factor for super-resolution (1 to 4), tilesize specifies the tile size for processing (0 or >= 32), syncgap is the sync gap mode, and model specifies the name of the pre-trained model to use.
 
