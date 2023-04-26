@@ -90,7 +90,7 @@ int RealCUGANWrapped::load(const std::string &parampath,
 #endif
 }
 
-int RealCUGANWrapped::process(const Image &inimage, Image &outimage) const {
+int RealCUGANWrapped::process(const RealCUGANImage &inimage, RealCUGANImage &outimage) const {
     int c = inimage.c;
     ncnn::Mat inimagemat =
             ncnn::Mat(inimage.w, inimage.h, (void *) inimage.d.data(), (size_t) c, c);
@@ -99,7 +99,7 @@ int RealCUGANWrapped::process(const Image &inimage, Image &outimage) const {
     return RealCUGAN::process(inimagemat, outimagemat);
 }
 
-int RealCUGANWrapped::process_cpu(const Image &inimage, Image &outimage) const {
+int RealCUGANWrapped::process_cpu(const RealCUGANImage &inimage, RealCUGANImage &outimage) const {
     int c = inimage.c;
     ncnn::Mat inimagemat =
             ncnn::Mat(inimage.w, inimage.h, (void *) inimage.d.data(), (size_t) c, c);

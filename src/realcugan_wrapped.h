@@ -33,9 +33,9 @@ public:
 
     int load(const std::string &parampath, const std::string &modelpath);
 
-    int process(const Image &inimage, Image &outimage) const;
+    int process(const RealCUGANImage &inimage, RealCUGANImage &outimage) const;
 
-    int process_cpu(const Image &inimage, Image &outimage) const;
+    int process_cpu(const RealCUGANImage &inimage, RealCUGANImage &outimage) const;
 
 private:
     int gpuid;
