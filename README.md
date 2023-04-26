@@ -44,7 +44,7 @@ Once the model is initialized, you can use the upscale method to super-resolve y
 
 ### Pillow
 ```python
-from pil import Image
+from PIL import Image
 realcugan = Realcugan(gpuid=0, scale=2, noise=3)
 with Image.open("input.jpg") as image:
     image = realcugan.process_pil(image)
