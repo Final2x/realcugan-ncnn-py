@@ -1,18 +1,18 @@
 #include "realcugan_wrapped.h"
 
 // Image Data Structure
-Image::Image(std::string d, int w, int h, int c) {
+RealCUGANImage::RealCUGANImage(std::string d, int w, int h, int c) {
     this->d = std::move(d);
     this->w = w;
     this->h = h;
     this->c = c;
 }
 
-void Image::set_data(std::string data) {
+void RealCUGANImage::set_data(std::string data) {
     this->d = std::move(data);
 }
 
-pybind11::bytes Image::get_data() const {
+pybind11::bytes RealCUGANImage::get_data() const {
     return pybind11::bytes(this->d);
 }
 
@@ -108,7 +108,6 @@ int RealCUGANWrapped::process_cpu(const Image &inimage, Image &outimage) const {
     return RealCUGAN::process_cpu(inimagemat, outimagemat);
 }
 
-// ?
 int get_gpu_count() { return ncnn::get_gpu_count(); }
 
 void destroy_gpu_instance() { ncnn::destroy_gpu_instance(); }
@@ -121,10 +120,10 @@ PYBIND11_MODULE(realcugan_ncnn_vulkan_wrapper, m) {
             .def("process_cpu", &RealCUGANWrapped::process_cpu)
             .def("set_parameters", &RealCUGANWrapped::set_parameters);
 
-    pybind11::class_<Image>(m, "Image")
+    pybind11::class_<RealCUGANImage>(m, "RealCUGANImage")
             .def(pybind11::init<std::string, int, int, int>())
-            .def("get_data", &Image::get_data)
-            .def("set_data", &Image::set_data);
+            .def("get_data", &RealCUGANImage::get_data)
+            .def("set_data", &RealCUGANImage::set_data);
 
     m.def("get_gpu_count", &get_gpu_count);
 

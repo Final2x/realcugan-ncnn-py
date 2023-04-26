@@ -8,14 +8,14 @@
 #include <utility>
 
 // wrapper class of ncnn::Mat
-class Image {
+class RealCUGANImage {
 public:
     std::string d;
     int w;
     int h;
     int c;
 
-    Image(std::string d, int w, int h, int c);
+    RealCUGANImage(std::string d, int w, int h, int c);
 
     void set_data(std::string data);
 
