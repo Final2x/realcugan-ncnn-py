@@ -1,5 +1,7 @@
 # realcugan-ncnn-py
-Python Binding for realcugan-ncnn-vulkan with PyBind11 [![PyPI version](https://badge.fury.io/py/realcugan-ncnn-py.svg?123456)](https://badge.fury.io/py/realcugan-ncnn-py?123456) [![test_pip](https://github.com/Tohrusky/realcugan-ncnn-py/actions/workflows/test_pip.yml/badge.svg)](https://github.com/Tohrusky/realcugan-ncnn-py/actions/workflows/test_pip.yml)  [![Release](https://github.com/Tohrusky/realcugan-ncnn-py/actions/workflows/Release.yml/badge.svg)](https://github.com/Tohrusky/realcugan-ncnn-py/actions/workflows/Release.yml)
+Python Binding for realcugan-ncnn-vulkan with PyBind11 
+
+[![PyPI version](https://badge.fury.io/py/realcugan-ncnn-py.svg?123456)](https://badge.fury.io/py/realcugan-ncnn-py?123456) [![test_pip](https://github.com/Tohrusky/realcugan-ncnn-py/actions/workflows/test_pip.yml/badge.svg)](https://github.com/Tohrusky/realcugan-ncnn-py/actions/workflows/test_pip.yml)  [![Release](https://github.com/Tohrusky/realcugan-ncnn-py/actions/workflows/Release.yml/badge.svg)](https://github.com/Tohrusky/realcugan-ncnn-py/actions/workflows/Release.yml)
 
 RealCUGAN is a Generative Adversarial Network (GAN) based model for image super-resolution (SR). This wrapper provides an easy-to-use interface for running the pre-trained RealCUGAN model.
 
