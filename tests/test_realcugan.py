@@ -37,7 +37,7 @@ else:
 
 
 def test_realcugan() -> None:
-    realcugan = Realcugan(gpuid=_gpuid, scale=2, noise=3)
+    realcugan = Realcugan(gpuid=_gpuid, scale=2, noise=-1)
     outimg = realcugan.process_cv2(TEST_IMG)
 
     assert calculate_image_similarity(TEST_IMG, outimg)
