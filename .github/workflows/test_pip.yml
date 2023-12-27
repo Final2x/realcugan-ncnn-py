@@ -25,7 +25,7 @@ jobs:
 
       - name: vulkan dll
         if: matrix.os-version == 'windows-latest'
-        run: echo F | xcopy .\test\vulkan-1.dll C:\Windows\System32
+        run: echo F | xcopy .\tests\vulkan-1.dll C:\Windows\System32
 
       - name: Check Python version
         run: |
