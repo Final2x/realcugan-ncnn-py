@@ -21,44 +21,46 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-# 参考https://github.com/media2x/realcugan-ncnn-vulkan-python，感谢原作者
+# 参考https://github.com/media2x/realcugan-ncnn-vulkan-python, 感谢原作者
 
 import pathlib
-import time
-from PIL import Image
-import numpy as np
-import cv2
+from typing import Optional
 
-if __package__ or "." in __name__:
+import cv2
+import numpy as np
+from PIL import Image
+
+try:
     from . import realcugan_ncnn_vulkan_wrapper as wrapped
-else:
+except ImportError:
     import realcugan_ncnn_vulkan_wrapper as wrapped
 
 
 class Realcugan:
-    """
-    :param gpuid: gpu device to use, -1 for cpu
-    :param tta_mode: enable test time argumentation
-    :param num_threads: processing thread count
-    :param noise: denoise level, -1 for conservative, 0 for no denoise, 1-3 for denoise
-    :param scale: upscale ratio
-    :param tilesize: tile size, 0 for auto, must >= 32
-    :param syncgap: sync gap mode
-    :param model: realcugan model name, default is "models-se", can be "models-se" or "models-pro" or "models-nose", or an absolute path to the models' directory
-    """
-
     def __init__(
-            self,
-            gpuid: int = 0,
-            tta_mode: bool = False,
-            num_threads: int = 1,
-            noise: int = -1,
-            scale: int = 2,
-            tilesize: int = 0,
-            syncgap: int = 3,
-            model: str = "models-se",
-            **_kwargs,
+        self,
+        gpuid: int = 0,
+        tta_mode: bool = False,
+        num_threads: int = 1,
+        noise: int = -1,
+        scale: int = 2,
+        tilesize: int = 0,
+        syncgap: int = 3,
+        model: str = "models-se",
     ):
+        """
+        RealCUGAN class for Super Resolution
+
+        :param gpuid: gpu device to use, -1 for cpu
+        :param tta_mode: enable test time argumentation
+        :param num_threads: processing thread count
+        :param noise: denoise level, -1 for conservative, 0 for no denoise, 1-3 for denoise
+        :param scale: upscale ratio
+        :param tilesize: tile size, 0 for auto, must >= 32
+        :param syncgap: sync gap mode
+        :param model: realcugan model name, default is "models-se", can be "models-se" or "models-pro" or "models-nose", or an absolute path to the models' directory
+        """
+
         # check arguments' validity
         assert gpuid >= -1, "gpuid must >= -1"
         assert noise in range(-1, 4), "noise must be -1-3"
@@ -95,9 +97,7 @@ class Realcugan:
         _prepadding = {2: 18, 3: 14, 4: 19}.get(self._scale, 0)
         self._realcugan_object.set_parameters(noise, scale, _prepadding, syncgap, tilesize)
 
-    def _load(
-            self, param_path: pathlib.Path = None, model_path: pathlib.Path = None
-    ) -> None:
+    def _load(self, param_path: Optional[pathlib.Path] = None, model_path: Optional[pathlib.Path] = None) -> None:
         """
         Load models from given paths. Use self._model if one or all of the parameters are not given.
 
@@ -111,31 +111,14 @@ class Realcugan:
                 model_path = pathlib.Path(__file__).parent / "models" / self._model
 
             if self._noise == -1:
-                param_path = (
-                        model_path
-                        / f"up{self._scale}x-conservative.param"
-                )
-                model_path = (
-                        model_path
-                        / f"up{self._scale}x-conservative.bin"
-                )
+                param_path = model_path / f"up{self._scale}x-conservative.param"
+                model_path = model_path / f"up{self._scale}x-conservative.bin"
             elif self._noise == 0:
-                param_path = (
-                        model_path
-                        / f"up{self._scale}x-no-denoise.param"
-                )
-                model_path = (
-                        model_path / f"up{self._scale}x-no-denoise.bin"
-                )
+                param_path = model_path / f"up{self._scale}x-no-denoise.param"
+                model_path = model_path / f"up{self._scale}x-no-denoise.bin"
             else:
-                param_path = (
-                        model_path
-                        / f"up{self._scale}x-denoise{self._noise}x.param"
-                )
-                model_path = (
-                        model_path
-                        / f"up{self._scale}x-denoise{self._noise}x.bin"
-                )
+                param_path = model_path / f"up{self._scale}x-denoise{self._noise}x.param"
+                model_path = model_path / f"up{self._scale}x-denoise{self._noise}x.bin"
 
         if self._realcugan_object.load(str(param_path), str(model_path)) != 0:
             raise Exception("Failed to load model")
@@ -156,14 +139,9 @@ class Realcugan:
 
         in_bytes = _image.tobytes()
         channels = int(len(in_bytes) / (_image.width * _image.height))
-        out_bytes = (self._scale ** 2) * len(in_bytes) * b"\x00"
+        out_bytes = (self._scale**2) * len(in_bytes) * b"\x00"
 
-        self.raw_in_image = wrapped.RealCUGANImage(
-            in_bytes,
-            _image.width,
-            _image.height,
-            channels
-        )
+        self.raw_in_image = wrapped.RealCUGANImage(in_bytes, _image.width, _image.height, channels)
 
         self.raw_out_image = wrapped.RealCUGANImage(
             out_bytes,
@@ -194,14 +172,9 @@ class Realcugan:
 
         in_bytes = _image.tobytes()
         channels = int(len(in_bytes) / (_image.shape[1] * _image.shape[0]))
-        out_bytes = (self._scale ** 2) * len(in_bytes) * b"\x00"
+        out_bytes = (self._scale**2) * len(in_bytes) * b"\x00"
 
-        self.raw_in_image = wrapped.RealCUGANImage(
-            in_bytes,
-            _image.shape[1],
-            _image.shape[0],
-            channels
-        )
+        self.raw_in_image = wrapped.RealCUGANImage(in_bytes, _image.shape[1], _image.shape[0], channels)
 
         self.raw_out_image = wrapped.RealCUGANImage(
             out_bytes,
@@ -212,13 +185,8 @@ class Realcugan:
 
         self.process()
 
-        res = np.frombuffer(
-            self.raw_out_image.get_data(),
-            dtype=np.uint8
-        ).reshape(
-            self._scale * _image.shape[0],
-            self._scale * _image.shape[1],
-            channels
+        res = np.frombuffer(self.raw_out_image.get_data(), dtype=np.uint8).reshape(
+            self._scale * _image.shape[0], self._scale * _image.shape[1], channels
         )
 
         return cv2.cvtColor(res, cv2.COLOR_RGB2BGR)
@@ -234,15 +202,10 @@ class Realcugan:
         :return: processed bytes image
         """
         if self.raw_in_image is None and self.raw_out_image is None:
-            self.raw_in_image = wrapped.RealCUGANImage(
-                _image_bytes,
-                width,
-                height,
-                channels
-            )
+            self.raw_in_image = wrapped.RealCUGANImage(_image_bytes, width, height, channels)
 
             self.raw_out_image = wrapped.RealCUGANImage(
-                (self._scale ** 2) * len(_image_bytes) * b"\x00",
+                (self._scale**2) * len(_image_bytes) * b"\x00",
                 self._scale * width,
                 self._scale * height,
                 channels,
@@ -253,25 +216,3 @@ class Realcugan:
         self.process()
 
         return self.raw_out_image.get_data()
-
-
-if __name__ == "__main__":
-    realcugan = Realcugan(gpuid=0, scale=2, noise=3)
-
-    time_start = time.time()
-
-    with Image.open("input.jpg") as image:
-        image = realcugan.process_pil(image)
-        image.save("output.jpg", quality=95)
-
-    print(f"Time: {(time.time() - time_start) * 1000} ms")
-
-    # test cv2
-
-    time_start = time.time()
-
-    image = cv2.imdecode(np.fromfile("input.jpg", dtype=np.uint8), cv2.IMREAD_COLOR)
-    image = realcugan.process_cv2(image)
-    cv2.imencode(".jpg", image)[1].tofile("output_cv2.jpg")
-
-    print(f"Time: {(time.time() - time_start) * 1000} ms")

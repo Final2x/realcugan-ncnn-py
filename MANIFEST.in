@@ -1,2 +1,0 @@
-recursive-include realcugan_ncnn_py/models *
-recursive-include realcugan_ncnn_py realcugan_ncnn_vulkan_wrapper.*.*
