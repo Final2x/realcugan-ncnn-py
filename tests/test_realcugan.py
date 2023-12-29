@@ -41,8 +41,15 @@ else:
     print("USE  ~~~~~~~~~~~~~~~~~GPU~~~~~~~~~~~~~~~~~~")
 
 
-def test_realcugan() -> None:
-    realcugan = Realcugan(gpuid=_gpuid, scale=2, noise=-1)
-    outimg = realcugan.process_cv2(TEST_IMG)
+class Test_Realcugan:
+    def test_realcugan_se(self) -> None:
+        realcugan = Realcugan(gpuid=_gpuid, scale=2, noise=-1)
+        outimg = realcugan.process_cv2(TEST_IMG)
 
-    assert calculate_image_similarity(TEST_IMG, outimg)
+        assert calculate_image_similarity(TEST_IMG, outimg)
+
+    def test_realcugan_pro(self) -> None:
+        realcugan = Realcugan(gpuid=_gpuid, scale=2, noise=-1, model="models-pro")
+        outimg = realcugan.process_cv2(TEST_IMG)
+
+        assert calculate_image_similarity(TEST_IMG, outimg)
