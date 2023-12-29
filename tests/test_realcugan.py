@@ -1,3 +1,4 @@
+import os
 import sys
 from pathlib import Path
 
@@ -26,7 +27,11 @@ def calculate_image_similarity(image1: np.ndarray, image2: np.ndarray) -> bool:
     return bool(score > 0.8)
 
 
-_gpuid = -1
+_gpuid = 0
+
+# gpuid = -1 when in GitHub Actions
+if os.environ.get("GITHUB_ACTIONS") == "true":
+    _gpuid = -1
 
 TEST_IMG = cv2.imread(str(filePATH.parent / "test.png"))
 
