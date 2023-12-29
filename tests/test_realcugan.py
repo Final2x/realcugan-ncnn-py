@@ -1,3 +1,4 @@
+import os
 import sys
 from pathlib import Path
 
@@ -26,7 +27,11 @@ def calculate_image_similarity(image1: np.ndarray, image2: np.ndarray) -> bool:
     return bool(score > 0.8)
 
 
-_gpuid = -1
+_gpuid = 0
+
+# gpuid = -1 when in GitHub Actions
+if os.environ.get("GITHUB_ACTIONS") == "true":
+    _gpuid = -1
 
 TEST_IMG = cv2.imread(str(filePATH.parent / "test.png"))
 
@@ -36,8 +41,15 @@ else:
     print("USE  ~~~~~~~~~~~~~~~~~GPU~~~~~~~~~~~~~~~~~~")
 
 
-def test_realcugan() -> None:
-    realcugan = Realcugan(gpuid=_gpuid, scale=2, noise=-1)
-    outimg = realcugan.process_cv2(TEST_IMG)
+class Test_Realcugan:
+    def test_realcugan_se(self) -> None:
+        realcugan = Realcugan(gpuid=_gpuid, scale=2, noise=-1)
+        outimg = realcugan.process_cv2(TEST_IMG)
 
-    assert calculate_image_similarity(TEST_IMG, outimg)
+        assert calculate_image_similarity(TEST_IMG, outimg)
+
+    def test_realcugan_pro(self) -> None:
+        realcugan = Realcugan(gpuid=_gpuid, scale=2, noise=-1, model="models-pro")
+        outimg = realcugan.process_cv2(TEST_IMG)
+
+        assert calculate_image_similarity(TEST_IMG, outimg)
