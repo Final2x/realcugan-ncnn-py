@@ -22,7 +22,7 @@ license = {text = "BSD-3-Clause"}
 name = "realcugan-ncnn-py"
 readme = "README.md"
 requires-python = ">=3.8"
-version = "1.3.3"
+version = "2.0.0"
 
 [project.urls]
 Homepage = "https://github.com/Final2x/realcugan-ncnn-py"
